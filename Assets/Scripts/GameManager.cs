@@ -5,49 +5,41 @@ using UnityEngine;
 using Photon.Realtime;
 using Photon.Pun;
 
-public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks
+public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IConnectionCallbacks, IInRoomCallbacks
 {
 	public GameObject testFace;
 
+	public override void OnJoinedRoom()
+	{
+		Debug.Log("OnJoinedRoom");
+	}
+
 	public override void OnLeftRoom()
 	{
-		Debug.Log("OnLeftRoom (local)");
+		Debug.Log("OnLeftRoom");
 
-		// back to main menu
 		SceneManager.LoadScene("Menu");
 	}
 
-	public void OnDisconnectedFromPhoton()
+	public override void OnDisconnected(DisconnectCause cause)
 	{
-		Debug.Log("OnDisconnectedFromPhoton");
+		Debug.Log("OnDisconnectedFromPhoton : " + cause);
 
-		// back to main menu
 		SceneManager.LoadScene("Menu");
 	}
 
-	public void OnPhotonInstantiate(PhotonMessageInfo info)
+	public override void OnPlayerEnteredRoom(Player player)
 	{
-		Debug.Log("OnPhotonInstantiate " + info.Sender);
+		Debug.Log("OnPlayerEnteredRoom: " + player);
+
+		//normalement il faut utiliser photoninstantiate pour que ça soit synchro chez tout le monde
+		GameObject go = Instantiate(testFace, new Vector3(Random.Range(-5, 5), Random.Range(-3, 3), 0), Quaternion.identity);
+		go.transform.GetChild(0).GetComponent<TextMesh>().text = player.NickName;
 	}
 
-	public void OnPhotonPlayerConnected(Player player)
+	public override void OnPlayerLeftRoom(Player player)
 	{
-		GameObject go = Instantiate(testFace);
-		testFace.transform.GetChild(0).GetComponent<TextMesh>().text = player.NickName;
-		Debug.Log("OnPhotonPlayerConnected: " + player);
-	}
-
-	public void OnPhotonPlayerDisconnected(Player player)
-	{
-		Debug.Log("OnPlayerDisconneced: " + player);
-	}
-
-	public void OnFailedToConnectToPhoton()
-	{
-		Debug.Log("OnFailedToConnectToPhoton");
-
-		// back to main menu
-		SceneManager.LoadScene("Menu");
+		Debug.Log("OnPlayerLeftRoom: " + player);
 	}
 
 	private void OnGUI()

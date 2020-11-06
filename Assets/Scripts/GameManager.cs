@@ -7,7 +7,24 @@ using Photon.Pun;
 
 public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IConnectionCallbacks, IInRoomCallbacks
 {
-	public GameObject testFace;
+	private void Start()
+	{
+		if(PhotonNetwork.CurrentRoom == null) //le joueur n'est pas connexté
+			SceneManager.LoadScene("Menu");
+
+		SpawnPlayer();
+	}
+
+	private void SpawnPlayer()
+	{
+		PhotonNetwork.Instantiate("Player", new Vector3(0, 0, 0), Quaternion.identity, 0);
+	}
+
+	private void Update()
+	{
+		if(Input.GetKeyDown(KeyCode.Escape))
+			SceneManager.LoadScene("Menu");
+	}
 
 	public override void OnJoinedRoom()
 	{
@@ -31,10 +48,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, ICo
 	public override void OnPlayerEnteredRoom(Player player)
 	{
 		Debug.Log("OnPlayerEnteredRoom: " + player);
-
-		//normalement il faut utiliser photoninstantiate pour que ça soit synchro chez tout le monde
-		GameObject go = Instantiate(testFace, new Vector3(Random.Range(-5, 5), Random.Range(-3, 3), 0), Quaternion.identity);
-		go.transform.GetChild(0).GetComponent<TextMesh>().text = player.NickName;
 	}
 
 	public override void OnPlayerLeftRoom(Player player)

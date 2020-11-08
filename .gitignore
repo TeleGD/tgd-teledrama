@@ -13,6 +13,9 @@
 # Never ignore Asset meta data
 ![Aa]ssets/**/*.meta
 
+# truc du plan qu'il faut pas commit (à récupérer sur le drive tgd)
+Assets/Textures/0-RDC*
+
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # [Aa]ssets/AssetStoreTools*
 

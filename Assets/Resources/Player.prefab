@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3725090702793211381}
   - component: {fileID: 3725090702793211380}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Leg_r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 3725090702957858528}
   - component: {fileID: 3725090702957858532}
   - component: {fileID: 3725090702957858533}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,7 +145,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.4}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -156,7 +156,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.6, y: 1.2}
+  m_Size: {x: 0.6, y: 0.4}
   m_EdgeRadius: 0
 --- !u!50 &3725090702957858528
 Rigidbody2D:
@@ -224,7 +224,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3725090703139215109}
   - component: {fileID: 3725090703139215108}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -307,7 +307,7 @@ GameObject:
   - component: {fileID: 3725090703147515392}
   - component: {fileID: 3725090703147515398}
   - component: {fileID: 3725090703147515399}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -399,7 +399,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3725090703228950475}
   - component: {fileID: 3725090703228950474}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pants
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -481,7 +481,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3725090703232452372}
   - component: {fileID: 3725090703232452395}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Leg_l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -564,7 +564,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3725090703288548789}
   - component: {fileID: 3725090703288548788}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Shirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -646,7 +646,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3725090703374167798}
   - component: {fileID: 3725090703374167797}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -728,7 +728,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3725090703396230533}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -764,7 +764,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3725090703618497946}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -795,7 +795,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3725090704064065511}
   - component: {fileID: 3725090704064065510}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Shirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -877,7 +877,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3725090704540391078}
   - component: {fileID: 3725090704540391077}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -961,7 +961,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3725090704572110285}
   - component: {fileID: 3725090704572110284}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1043,7 +1043,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3725090704700530562}
   - component: {fileID: 3725090704700530561}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Arm_l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1126,7 +1126,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3725090704829115289}
   - component: {fileID: 3725090704829115288}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Arm_r
   m_TagString: Untagged
   m_Icon: {fileID: 0}

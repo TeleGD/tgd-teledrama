@@ -7113,6 +7113,11 @@ PrefabInstance:
       propertyPath: spawnPos
       value: 
       objectReference: {fileID: 855549282}
+    - target: {fileID: 5179177925956843789, guid: 27ea51f789ab4a640abc7b8450f12cf9,
+        type: 3}
+      propertyPath: exitIfNoMultiplayer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5179177925956843826, guid: 27ea51f789ab4a640abc7b8450f12cf9,
         type: 3}
       propertyPath: m_Name

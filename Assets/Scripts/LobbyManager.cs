@@ -15,7 +15,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 	public Transform roomUi;
 	private string roomName;
 
-	private const string version = "0.2";
+	private const string version = "0.4";
 
 	void Awake()
 	{

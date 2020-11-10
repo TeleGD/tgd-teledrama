@@ -11,30 +11,33 @@ public class NetworkedPlayer : MonoBehaviourPun, IPunObservable
 
     private void Start()
     {
-        if(photonView.IsMine)
-        {
-            GetComponent<PlayerController>().enabled = true;
-        }
+		//initalise le controlleur du joueur en indiquant si ce joueur nous appartient
+		GetComponent<PlayerController>().InitPlayer(photonView.IsMine);
+		if (photonView.IsMine)
+			PlayerListManager.instance.photonView.RPC("AddPlayer", RpcTarget.MasterClient, photonView.ViewID);
 
-        gameObject.name = photonView.Owner.NickName;
+        gameObject.name = photonView.Owner.NickName; //nom du joueur dans l'éditeur
+
         body = GetComponent<Rigidbody2D>();
 		targetPlayerPos = transform.position;
-		nameRenderer.text = photonView.Owner.NickName;
+
+		//affichage du nom du joueur
+		nameRenderer.text = photonView.Owner.NickName + " : " + photonView.Owner.ActorNumber;
 		nameRenderer.transform.parent.GetChild(1).localScale = nameRenderer.GetComponent<Renderer>().bounds.size;
 	}
 
+
+	//synchronise la position et direction du joueur 10 fois par seconde
 	void IPunObservable.OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 	{
-		if (stream.IsWriting)
+		if (stream.IsWriting) //Mon joueur : on envoie les donnees
 		{
-			//Mon joueur : on envoie les donnees
 			stream.SendNext((Vector2)transform.position);
 			if (body != null)
 				stream.SendNext(body.velocity);
 		}
-		else
+		else //Autre joueur : on recoit les donnees
 		{
-			//Autre joueur : on recoit les donnees
 			targetPlayerPos = (Vector2)stream.ReceiveNext();
 			if (body != null)
 				body.velocity = (Vector2)stream.ReceiveNext();
@@ -48,5 +51,11 @@ public class NetworkedPlayer : MonoBehaviourPun, IPunObservable
 		{
 			transform.position = Vector2.Lerp(transform.position, targetPlayerPos + body.velocity * 0.2f, Time.deltaTime * 5);
 		}
+	}
+
+	[PunRPC]
+	public void SetPlayerColor(Vector3 color)
+	{
+		transform.Find("Model/Body").GetComponent<Renderer>().material.color = new Color(color.x, color.y, color.z);
 	}
 }

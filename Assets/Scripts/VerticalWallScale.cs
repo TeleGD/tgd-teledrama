@@ -22,7 +22,7 @@ public class VerticalWallScale : MonoBehaviour
         {
             float scale = 1f / transform.parent.localScale.y;
             transform.localScale = new Vector3(1, scale, 1);
-            transform.localPosition = Vector3.up * (scale - 0.5f);
+            transform.localPosition = Vector3.up * ((scale / 2f) - 0.5f);
         }
             
     }

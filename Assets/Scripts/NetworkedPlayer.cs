@@ -7,6 +7,7 @@ public class NetworkedPlayer : MonoBehaviourPun, IPunObservable
 {
     private Rigidbody2D body;
 	private Vector2 targetPlayerPos;
+	public TextMesh nameRenderer;
 
     private void Start()
     {
@@ -18,7 +19,8 @@ public class NetworkedPlayer : MonoBehaviourPun, IPunObservable
         gameObject.name = photonView.Owner.NickName;
         body = GetComponent<Rigidbody2D>();
 		targetPlayerPos = transform.position;
-		transform.Find("Name").GetComponent<TextMesh>().text = photonView.Owner.NickName;
+		nameRenderer.text = photonView.Owner.NickName;
+		nameRenderer.transform.parent.GetChild(1).localScale = nameRenderer.GetComponent<Renderer>().bounds.size;
 	}
 
 	void IPunObservable.OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

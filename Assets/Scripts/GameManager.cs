@@ -7,17 +7,23 @@ using Photon.Pun;
 
 public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IConnectionCallbacks, IInRoomCallbacks
 {
+	public bool exitIfNoMultiplayer = true;
+	public Transform spawnPos;
+
 	private void Start()
 	{
-		if(PhotonNetwork.CurrentRoom == null) //le joueur n'est pas connexté
-			SceneManager.LoadScene("Menu");
-
-		SpawnPlayer();
+		if(PhotonNetwork.CurrentRoom == null) //le joueur n'est pas connecté
+		{
+			if(exitIfNoMultiplayer)
+				SceneManager.LoadScene("Menu");
+		}
+		else
+			SpawnPlayer();
 	}
 
 	private void SpawnPlayer()
 	{
-		PhotonNetwork.Instantiate("Player", new Vector3(0, 0, 0), Quaternion.identity, 0);
+		PhotonNetwork.Instantiate("Player", spawnPos.position + (Vector3)(Random.insideUnitCircle * 3), Quaternion.identity, 0);
 	}
 
 	private void Update()

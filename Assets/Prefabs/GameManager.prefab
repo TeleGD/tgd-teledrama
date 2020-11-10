@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5179177925956843788}
   - component: {fileID: 5179177925956843789}
+  - component: {fileID: 1663182243}
+  - component: {fileID: 1663182244}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -52,3 +54,38 @@ MonoBehaviour:
   - {r: 0.9339623, g: 0.40970984, b: 0.7844899, a: 1}
   - {r: 0.1735938, g: 0.7830189, b: 0.72596055, a: 1}
   spawnPos: {fileID: 0}
+--- !u!114 &1663182243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5179177925956843826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  observableSearch: 2
+  Synchronization: 3
+  OwnershipTransfer: 0
+  ObservedComponents: []
+  viewIdField: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &1663182244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5179177925956843826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 271681ec9c2d91240b64e838853ca2a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  availableColorsIds: 

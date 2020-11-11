@@ -4,7 +4,6 @@ using UnityEngine.UI;
 using Photon.Realtime;
 using Photon.Pun;
 using System.Collections.Generic;
-using WebSocketSharp;
 
 //fait fonctionner le menu
 public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IConnectionCallbacks
@@ -72,7 +71,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 	
 	void SetLoadingScreen(string loadingText)
 	{
-		if (loadingText.IsNullOrEmpty())  //Si le texte est vide, on ferme l'ecran de chargement
+		if (loadingText == "")  //Si le texte est vide, on ferme l'ecran de chargement
 		{
 			isLoading = false;
 			loadingScreen.gameObject.SetActive(false);

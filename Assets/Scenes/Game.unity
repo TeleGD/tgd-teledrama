@@ -422,7 +422,7 @@ SpriteRenderer:
   m_Size: {x: 48.72, y: 34.446564}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &85519551
@@ -8507,7 +8507,7 @@ SpriteRenderer:
   m_Size: {x: 48.72, y: 34.446564}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1449996178
@@ -9813,7 +9813,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1646891572}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 497144644}
@@ -12035,16 +12035,8 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1663182243, guid: 27ea51f789ab4a640abc7b8450f12cf9, type: 3}
-      propertyPath: ObservedComponents.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1663182243, guid: 27ea51f789ab4a640abc7b8450f12cf9, type: 3}
       propertyPath: viewIdField
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1663182243, guid: 27ea51f789ab4a640abc7b8450f12cf9, type: 3}
-      propertyPath: observableSearch
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5179177925956843788, guid: 27ea51f789ab4a640abc7b8450f12cf9,
         type: 3}

@@ -4,30 +4,40 @@ using UnityEngine.UI;
 using Photon.Realtime;
 using Photon.Pun;
 using System.Collections.Generic;
+using WebSocketSharp;
 
 //fait fonctionner le menu
 public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IConnectionCallbacks
 {
-	public Transform loadingScreen;
-	public Transform tabs;
+	public Transform canvas;
+	private Transform loadingScreen;
+	private Transform tabs;
 	private bool isLoading;
 
 	public Transform roomUi;
 	private string roomName;
 
-	private const string version = "0.4";
+	private const string version = "0.5";
 
-	void Awake()
+	void Start()
 	{
 		PhotonNetwork.AutomaticallySyncScene = true;
 		Cursor.lockState = CursorLockMode.None;
 
-		if (PhotonNetwork.NetworkClientState == ClientState.PeerCreated)
-		{
-			PhotonNetwork.NetworkingClient.AppVersion = "TeleDrama_" + version;
-			PhotonNetwork.ConnectUsingSettings();
-			SetLoadingScreen("Connexion au serveur...");
-		}
+		InitUI();
+		ConnectToPhoton();
+	}
+
+	#region Interface graphique
+	//#########################
+	//#  INTERFACE GRAPHIQUE  #
+	//#########################
+
+	//Initialise l'interface graphique
+	private void InitUI()
+	{
+		loadingScreen = canvas.Find("Loading");
+		tabs = canvas.Find("Panel/Tabs");
 
 		if (PlayerPrefs.GetString("playerName", "Player") == "Player")
 			PhotonNetwork.NickName = "Joueur" + Random.Range(1, 999);
@@ -47,13 +57,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 		GameObject.Find("SystemInfo").GetComponent<Text>().text = "Le jeu tourne sur " + SystemInfo.graphicsDeviceName;
 	}
 
-	private void Update()
-	{
-		if (!isLoading) return;
-		loadingScreen.GetChild(1).eulerAngles += new Vector3(0, 0, Time.deltaTime * -300);
-		loadingScreen.GetChild(2).eulerAngles += new Vector3(0, 0, Time.deltaTime * 200);
-	}
-
+	//permet de naviguer entre les différents onglets du menu
 	public void SwitchTab(int tabId)
 	{
 		//empeche les debordements de liste
@@ -65,12 +69,37 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 			tabs.GetChild(i).gameObject.SetActive(i == tabId);
 		}
 	}
+	
+	void SetLoadingScreen(string loadingText)
+	{
+		if (loadingText.IsNullOrEmpty())  //Si le texte est vide, on ferme l'ecran de chargement
+		{
+			isLoading = false;
+			loadingScreen.gameObject.SetActive(false);
+		}
+		else
+		{
+			isLoading = true;
+			loadingScreen.gameObject.SetActive(true);
+			loadingScreen.GetChild(0).GetComponent<Text>().text = loadingText;
+		}
+	}
+
+	//anime l'écran de chargement
+	private void Update()
+	{
+		if (!isLoading) return;
+		loadingScreen.GetChild(1).eulerAngles += new Vector3(0, 0, Time.deltaTime * -300);
+		loadingScreen.GetChild(2).eulerAngles += new Vector3(0, 0, Time.deltaTime * 200);
+	}
+
+	//Ces fonctions sont appelés quand on appuie sur les boutons dans l'interface
 
 	public void CreateRoom()
 	{
 		ChangePlayerName(GameObject.Find("Player Name").GetComponent<InputField>().text);
-		PhotonNetwork.CreateRoom(roomName, new RoomOptions() { MaxPlayers = 16 }, null);
-		SetLoadingScreen("Création du salon...");
+		if(PhotonNetwork.CreateRoom(roomName, new RoomOptions() { MaxPlayers = 20 }, null))
+			SetLoadingScreen("Création du salon...");
 	}
 
 	public void ConnectToRoomByName()
@@ -81,7 +110,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 
 	public void ConnectToRoom(string targetName)
 	{
-		ChangePlayerName(GameObject.Find("Player Name").GetComponent<InputField>().text);
+		ChangePlayerName(canvas.Find("Player Name").GetComponent<InputField>().text);
 		PhotonNetwork.JoinRoom(targetName);
 		SetLoadingScreen("Connection au salon...");
 	}
@@ -97,6 +126,33 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 	public void ChangeRoomName(string newName)
 	{
 		roomName = newName;
+	}
+
+	public void ChangeVolume(float newVolume)
+	{
+		AudioListener.volume = newVolume;
+		GameObject.Find("Volume Slider/Label").GetComponent<Text>().text = "Volume : " + Mathf.CeilToInt(newVolume * 100) + "%";
+		PlayerPrefs.SetInt("volume", Mathf.CeilToInt(newVolume * 100));
+	}
+
+	#endregion
+
+	#region Photon
+	//############
+	//#  PHOTON  #
+	//############
+
+	private void ConnectToPhoton()
+	{
+		if(!PhotonNetwork.IsConnected)
+		{
+			PhotonNetwork.GameVersion = "TeleDrama_" + version;
+			PhotonNetwork.PhotonServerSettings.AppSettings.AppVersion = "TeleDrama_" + version;
+			PhotonNetwork.ConnectUsingSettings();
+			SetLoadingScreen("Connexion au serveur...");
+		}
+		else
+			PhotonNetwork.JoinLobby();
 	}
 
 	public override void OnRoomListUpdate(List<RoomInfo> roomList)
@@ -131,22 +187,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 		}
 	}
 
-	//si display est vide, cache l'ecran de chargement
-	void SetLoadingScreen(string display)
-	{
-		if(display != "")
-		{
-			isLoading = true;
-			loadingScreen.gameObject.SetActive(true);
-			loadingScreen.GetChild(0).GetComponent<Text>().text = display;
-		}
-		else
-		{
-			isLoading = false;
-			loadingScreen.gameObject.SetActive(false);
-		}
-	}
-		
 	//Callbacks de Photon
 
 	public override void OnCreatedRoom()
@@ -160,15 +200,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 		PhotonNetwork.JoinLobby();
 	}
 
+	//connexion au master server terminée
 	public override void OnJoinedLobby()
 	{
 		SetLoadingScreen("");
 	}
 
-	public void ChangeVolume(float newVolume)
-	{
-		AudioListener.volume = newVolume;
-		GameObject.Find("Volume Slider/Label").GetComponent<Text>().text = "Volume : " + Mathf.CeilToInt(newVolume * 100) + "%";
-		PlayerPrefs.SetInt("volume", Mathf.CeilToInt(newVolume * 100));
-	}
+	#endregion
 }

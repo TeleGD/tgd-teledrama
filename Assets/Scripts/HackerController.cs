@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class hackerController : MonoBehaviour
+public class HackerController : MonoBehaviour
 {
     private GameObject button;
     public float hackDelay = 15f;
@@ -15,6 +15,13 @@ public class hackerController : MonoBehaviour
     {
         button = GameObject.Find("Canvas").transform.Find("HackButton").gameObject;
         button.SetActive(true);
+        button.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(Hack);
+    }
+
+    void Hack(){
+        if(GetCountdown() < 0){
+            ButtonCountdown();
+        }
     }
 
 
@@ -26,7 +33,7 @@ public class hackerController : MonoBehaviour
         button.GetComponent<UnityEngine.UI.Button>().interactable = true;
     }
 
-    void buttonCountdown(){
+    void ButtonCountdown(){
         DisableButton();
         timePressed = Time.time;
         Invoke("enableButton", hackDelay);
@@ -41,19 +48,19 @@ public class hackerController : MonoBehaviour
     {
         Debug.Log(GetCountdown());
         if(Input.GetKeyDown(KeyCode.O)){
-            buttonCountdown();
+            ButtonCountdown();
         }
     }
 
     //verifie si un joueur est a porté du hacker
-    bool inRange(){
+    bool InRange(){
         foreach(GameObject joueur in joueurs){
             if(Vector3.Distance(this.transform.position, joueur.transform.position) <= hackRange) return true;
         }
         return false;
     }
 
-    GameObject getClosestPlayer(){
+    GameObject GetClosestPlayer(){
         float minDist = -1f;
         GameObject closest = null;
         foreach(GameObject joueur in joueurs){

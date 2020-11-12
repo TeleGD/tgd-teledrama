@@ -67,7 +67,14 @@ public class PlayerListManager : MonoBehaviourPun
 
     public void AssignRoles()
     {
-        int directorIndex = Random.Range(0, playerList.Count); //choisi le directeur
+        int pcount = playerList.Count;
+
+        if (pcount < 3)
+            return;
+        
+        int hackerCount = 1 + Mathf.FloorToInt(pcount / 6f);
+        //index 0 = directeur, index 1 à n = hacker
+        int[] rolesIndexes = TGDUtils.RandomIntegers(1 + hackerCount, pcount);
 
         int i = 0;
         Dictionary<int, PlayerData> clone = new Dictionary<int, PlayerData>(playerList);
@@ -75,10 +82,17 @@ public class PlayerListManager : MonoBehaviourPun
         {
             //choix du role
             int role = 0;
-            if (i == directorIndex)
+            if (i == rolesIndexes[0])
                 role = (int)GameManager.Roles.Director;
             else
-                role = Random.Range(0, 2);
+            {
+                //on parcourt les hackers
+                for(int j = 1; j < rolesIndexes.Length; j++)
+                {
+                    if(i == rolesIndexes[j])
+                        role = (int)GameManager.Roles.Hacker;
+                }
+            }
 
             //mise à jour du dictionnaire
             PlayerData data = entry.Value;

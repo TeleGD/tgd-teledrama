@@ -44,6 +44,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, ICo
 
 	public void MasterStartGameButton()
 	{
+		if (PlayerListManager.instance.playerList.Count < 3)
+			return;
+
 		photonView.RPC("StartGame", RpcTarget.AllBuffered);
 		PlayerListManager.instance.AssignRoles();
 		transform.Find("Canvas/Master").gameObject.SetActive(false);

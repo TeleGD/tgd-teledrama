@@ -8,12 +8,12 @@ public class HackerController : MonoBehaviour
     public float hackDelay = 15f;
     public float hackRange = 1f;
     public float timePressed;
-    GameObject[] joueurs = GameObject.FindGameObjectsWithTag("Player");
+    GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
     // Start is called before the first frame update
 
     void Start()
     {
-        button = GameObject.Find("Canvas").transform.Find("HackButton").gameObject;
+        button = GameManager.instance.transform.Find("Canvas/HackButton").gameObject;
         button.SetActive(true);
         button.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(Hack);
     }
@@ -36,7 +36,7 @@ public class HackerController : MonoBehaviour
     void ButtonCountdown(){
         DisableButton();
         timePressed = Time.time;
-        Invoke("enableButton", hackDelay);
+        Invoke("EnableButton", hackDelay);
     }
 
     float GetCountdown(){
@@ -54,7 +54,7 @@ public class HackerController : MonoBehaviour
 
     //verifie si un joueur est a porté du hacker
     bool InRange(){
-        foreach(GameObject joueur in joueurs){
+        foreach(GameObject joueur in players){
             if(Vector3.Distance(this.transform.position, joueur.transform.position) <= hackRange) return true;
         }
         return false;
@@ -63,7 +63,7 @@ public class HackerController : MonoBehaviour
     GameObject GetClosestPlayer(){
         float minDist = -1f;
         GameObject closest = null;
-        foreach(GameObject joueur in joueurs){
+        foreach(GameObject joueur in players){
             float dist = Vector3.Distance(this.transform.position, joueur.transform.position);
             if( dist <= minDist || minDist < 0) {
                 minDist = dist;

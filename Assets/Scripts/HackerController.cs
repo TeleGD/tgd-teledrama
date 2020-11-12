@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon;
+using Photon.Pun;
 
 public class HackerController : MonoBehaviour
 {
@@ -9,34 +11,29 @@ public class HackerController : MonoBehaviour
     public float hackRange = 1f;
     public float timePressed;
     GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+    private UnityEngine.UI.Button buttonController;
     // Start is called before the first frame update
 
     void Start()
     {
         button = GameManager.instance.transform.Find("Canvas/HackButton").gameObject;
         button.SetActive(true);
-        button.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(Hack);
+        buttonController = button.GetComponent<UnityEngine.UI.Button>();
+        buttonController.onClick.AddListener(Hack);
     }
 
     void Hack(){
-        if(GetCountdown() < 0){
+        if(GetCountdown() < 0 && InRange()){
             ButtonCountdown();
+            GameObject victime = GetClosestPlayer();
+            PhotonView pv = victime.GetComponent<PhotonView>();
+            pv.RPC("GetHacked", pv.Owner);
         }
     }
 
 
-    void DisableButton(){
-        button.GetComponent<UnityEngine.UI.Button>().interactable = false;
-    }
-
-    void EnableButton(){
-        button.GetComponent<UnityEngine.UI.Button>().interactable = true;
-    }
-
     void ButtonCountdown(){
-        DisableButton();
         timePressed = Time.time;
-        Invoke("EnableButton", hackDelay);
     }
 
     float GetCountdown(){
@@ -46,10 +43,9 @@ public class HackerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(GetCountdown());
-        if(Input.GetKeyDown(KeyCode.O)){
-            ButtonCountdown();
-        }
+
+        buttonController.interactable = (InRange() && GetCountdown() < 0);
+        
     }
 
     //verifie si un joueur est a porté du hacker

@@ -109,7 +109,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 
 	public void ConnectToRoom(string targetName)
 	{
-		ChangePlayerName(canvas.Find("Player Name").GetComponent<InputField>().text);
+		ChangePlayerName(GameObject.Find("Player Name").GetComponent<InputField>().text);
 		PhotonNetwork.JoinRoom(targetName);
 		SetLoadingScreen("Connection au salon...");
 	}
@@ -156,6 +156,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 
 	public override void OnRoomListUpdate(List<RoomInfo> roomList)
 	{
+		Debug.Log("OnRoomListUpdate : " + roomList.Count + " rooms");
+
 		if (roomList.Count == 0) // Aucune room trouvee
 		{
 			roomUi.GetChild(0).gameObject.SetActive(true); //message de liste vide
@@ -190,6 +192,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 
 	public override void OnCreatedRoom()
 	{
+		Debug.Log("OnCreatedRoom");
 		PhotonNetwork.LoadLevel("Game");
 	}
 
@@ -202,6 +205,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 	//connexion au master server terminée
 	public override void OnJoinedLobby()
 	{
+		Debug.Log("OnJoinedLobby");
 		SetLoadingScreen("");
 	}
 

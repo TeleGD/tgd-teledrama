@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class hackerComponent : MonoBehaviour
+public class hackerController : MonoBehaviour
 {
     private GameObject button;
     public float hackDelay = 15f;
@@ -18,28 +18,28 @@ public class hackerComponent : MonoBehaviour
     }
 
 
-    void disableButton(){
+    void DisableButton(){
         button.GetComponent<UnityEngine.UI.Button>().interactable = false;
     }
 
-    void enableButton(){
+    void EnableButton(){
         button.GetComponent<UnityEngine.UI.Button>().interactable = true;
     }
 
     void buttonCountdown(){
-        disableButton();
+        DisableButton();
         timePressed = Time.time;
         Invoke("enableButton", hackDelay);
     }
 
-    float getCountdown(){
+    float GetCountdown(){
         return hackDelay - Time.time + timePressed;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(getCountdown());
+        Debug.Log(GetCountdown());
         if(Input.GetKeyDown(KeyCode.O)){
             buttonCountdown();
         }

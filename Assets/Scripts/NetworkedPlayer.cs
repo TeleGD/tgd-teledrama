@@ -69,4 +69,9 @@ public class NetworkedPlayer : MonoBehaviourPun, IPunObservable
 		if (role == (int)GameManager.Roles.Hacker)
 			gameObject.AddComponent<HackerController>();
 	}
+
+	[PunRPC]
+	public void GetHacked(){
+		Debug.Log("LMAOOOOO tu t'es fait pirater");
+	}
 }

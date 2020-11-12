@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public float speedCamera = 0.1F; //vitesse en m/s
-    public Vector3 targetCam = new Vector3(0, 0, 0);
+    public float spectatorSpeed = 10; //vitesse en m/s
 
     private void Update()
     {
@@ -20,10 +19,7 @@ public class CameraController : MonoBehaviour
             Vector2 dir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
             if (dir.sqrMagnitude > 1)
                 dir.Normalize(); //empeche la caméra de se déplacer plus vite en diagonale
-            dir *= speedCamera;
-            targetCam = targetCam + (Vector3)dir;
-            Vector3 targetPos = (targetCam + (Vector3)dir * 0.5f) + Vector3.back * 10;
-            transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 3);
+            transform.position += (Vector3)dir * spectatorSpeed * Time.deltaTime;
         }
     }
 }

@@ -105,10 +105,4 @@ public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, ICo
 		Color c = playerColors[index];
 		return new Vector3(c.r, c.g, c.b);
 	}
-
-	//affiche le ping à l'écran
-	private void OnGUI()
-	{
-		GUI.Label(new Rect(4, 4, 150, 24), "Ping : " + PhotonNetwork.GetPing() + "ms");
-	}
 }

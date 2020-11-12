@@ -16,7 +16,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 	public Transform roomUi;
 	private string roomName;
 
-	private const string version = "0.5";
+	private const string version = "0.6";
 
 	void Start()
 	{
@@ -97,7 +97,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 	public void CreateRoom()
 	{
 		ChangePlayerName(GameObject.Find("Player Name").GetComponent<InputField>().text);
-		if(PhotonNetwork.CreateRoom(roomName, new RoomOptions() { MaxPlayers = 20 }, null))
+		if(PhotonNetwork.CreateRoom(roomName, new RoomOptions() { MaxPlayers = 10 }, null))
 			SetLoadingScreen("Création du salon...");
 	}
 
@@ -199,6 +199,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 	public override void OnConnectedToMaster()
 	{
 		SetLoadingScreen("Connection au lobby...");
+		PhotonNetwork.OfflineMode = false;
 		PhotonNetwork.JoinLobby();
 	}
 

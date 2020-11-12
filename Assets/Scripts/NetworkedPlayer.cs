@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.UI;
 
 public class NetworkedPlayer : MonoBehaviourPun, IPunObservable
 {
@@ -22,7 +23,7 @@ public class NetworkedPlayer : MonoBehaviourPun, IPunObservable
 		targetPlayerPos = transform.position;
 
 		//affichage du nom du joueur
-		nameRenderer.text = photonView.Owner.NickName + " : " + photonView.Owner.ActorNumber;
+		nameRenderer.text = photonView.Owner.NickName;
 		nameRenderer.transform.parent.GetChild(1).localScale = nameRenderer.GetComponent<Renderer>().bounds.size;
 	}
 
@@ -57,5 +58,20 @@ public class NetworkedPlayer : MonoBehaviourPun, IPunObservable
 	public void SetPlayerColor(Vector3 color)
 	{
 		transform.Find("Model/Body").GetComponent<Renderer>().material.color = new Color(color.x, color.y, color.z);
+	}
+
+	[PunRPC]
+	public void SetRole(int role)
+	{
+		string roleName = (role == 0 ? "Etudiant" : (role == 1 ? "Hacker" : "Directeur"));
+		GameManager.instance.transform.Find("Canvas/Role").GetComponent<Text>().text = "Role : " + roleName;
+		
+		if (role == (int)GameManager.Roles.Hacker)
+			gameObject.AddComponent<HackerController>();
+	}
+
+	[PunRPC]
+	public void GetHacked(){
+		Debug.Log("LMAOOOOO tu t'es fait pirater");
 	}
 }

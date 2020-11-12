@@ -16,7 +16,7 @@ MonoBehaviour:
     AppIdRealtime: 6481ddf4-2b7c-4a0d-9a10-e17e237204e0
     AppIdChat: 
     AppIdVoice: 
-    AppVersion: 
+    AppVersion: TeleDrama_0.5
     UseNameServer: 1
     FixedRegion: 
     Server: 
@@ -40,6 +40,9 @@ MonoBehaviour:
   - RespawnSpaceship
   - SetPlayerColor
   - AddPlayer
+  - StartGame
+  - SetRole
+  - GetHacked
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

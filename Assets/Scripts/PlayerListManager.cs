@@ -65,6 +65,47 @@ public class PlayerListManager : MonoBehaviourPun
         data.playerView.RPC("SetPlayerColor", RpcTarget.AllBuffered, c);
     }
 
+    public void AssignRoles()
+    {
+        int pcount = playerList.Count;
+
+        if (pcount < 3)
+            return;
+        
+        int hackerCount = 1 + Mathf.FloorToInt(pcount / 6f);
+        //index 0 = directeur, index 1 à n = hacker
+        int[] rolesIndexes = TGDUtils.RandomIntegers(1 + hackerCount, pcount);
+
+        int i = 0;
+        Dictionary<int, PlayerData> clone = new Dictionary<int, PlayerData>(playerList);
+        foreach (KeyValuePair<int, PlayerData> entry in clone)
+        {
+            //choix du role
+            int role = 0;
+            if (i == rolesIndexes[0])
+                role = (int)GameManager.Roles.Director;
+            else
+            {
+                //on parcourt les hackers
+                for(int j = 1; j < rolesIndexes.Length; j++)
+                {
+                    if(i == rolesIndexes[j])
+                        role = (int)GameManager.Roles.Hacker;
+                }
+            }
+
+            //mise à jour du dictionnaire
+            PlayerData data = entry.Value;
+            data.role = role;
+            playerList[entry.Key] = data;
+
+            //envoie au joueur son role
+            data.playerView.RPC("SetRole", data.playerView.Owner, role);
+
+            i++;
+        }
+    }
+
     //structure contenant les informations utiles du joueur
     public struct PlayerData
     {

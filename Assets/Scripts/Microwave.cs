@@ -27,7 +27,8 @@ public class Microwave : MonoBehaviour
             yield return new WaitForSeconds(1);
             seconde += 1;
             timer.value = seconde;
-            information.text = "Please return in " + seconde.ToString() + " secondes ...";
+            int affichage = duration - seconde;
+            information.text = "Please return in " + affichage.ToString() + " secondes ...";
         }
         running = false;
         done = true;

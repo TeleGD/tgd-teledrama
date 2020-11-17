@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using Photon.Realtime;
 using Photon.Pun;
 using System.Collections.Generic;
+using ExitGames.Client.Photon;
 
 //fait fonctionner le menu
 public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IConnectionCallbacks
@@ -16,12 +17,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 	public Transform roomUi;
 	private string roomName;
 
-	private const string version = "0.6";
+	private const string version = "0.7";
 
 	void Start()
 	{
 		PhotonNetwork.AutomaticallySyncScene = true;
 		Cursor.lockState = CursorLockMode.None;
+
+		bool register = PhotonPeer.RegisterType(typeof(PlayerData), 255, PlayerData.Serialize, PlayerData.Deserialize);
+		Debug.Log("Register PlayerData serialization : " + register);
 
 		InitUI();
 		ConnectToPhoton();

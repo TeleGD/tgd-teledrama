@@ -4,12 +4,14 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using Photon.Realtime;
 using Photon.Pun;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IConnectionCallbacks, IInRoomCallbacks
 {
 	public static GameManager instance;
 
-	public enum Roles { Student, Hacker, Director };
+	public enum Role { Student, Hacker, Director };
+	private Role myRole;
 
 	public bool exitIfNoMultiplayer = true;
 	public Color[] playerColors;
@@ -104,5 +106,21 @@ public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, ICo
 		index = index % playerColors.Length;
 		Color c = playerColors[index];
 		return new Vector3(c.r, c.g, c.b);
+	}
+
+	public void SetMyRole(Role role)
+	{
+		myRole = role;
+		transform.Find("Canvas/Role").GetComponent<Text>().text = "Role : " + GetRoleName(role);
+	}
+
+	public Role GetMyRole()
+	{
+		return myRole;
+	}
+
+	public string GetRoleName(Role role)
+	{
+		return (role == Role.Student ? "Etudiant" : (role == Role.Hacker ? "Hacker" : "Directeur"));
 	}
 }

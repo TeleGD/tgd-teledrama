@@ -63,15 +63,24 @@ public class NetworkedPlayer : MonoBehaviourPun, IPunObservable
 	[PunRPC]
 	public void SetRole(int role)
 	{
-		string roleName = (role == 0 ? "Etudiant" : (role == 1 ? "Hacker" : "Directeur"));
-		GameManager.instance.transform.Find("Canvas/Role").GetComponent<Text>().text = "Role : " + roleName;
+		GameManager.instance.SetMyRole((GameManager.Role)role);
 		
-		if (role == (int)GameManager.Roles.Hacker)
+		if (role == (int)GameManager.Role.Hacker)
 			gameObject.AddComponent<HackerController>();
+
+		PlayerListManager.instance.UpdatePlayerListUI();
 	}
 
 	[PunRPC]
 	public void GetHacked(){
 		Debug.Log("LMAOOOOO tu t'es fait pirater");
+	}
+
+	[PunRPC]
+	public void KickPlayer()
+	{
+		if (PlayerController.me == gameObject)
+			PlayerController.me = null;
+		gameObject.SetActive(false);
 	}
 }

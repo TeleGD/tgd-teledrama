@@ -16,7 +16,7 @@ MonoBehaviour:
     AppIdRealtime: 6481ddf4-2b7c-4a0d-9a10-e17e237204e0
     AppIdChat: 
     AppIdVoice: 
-    AppVersion: TeleDrama_0.5
+    AppVersion: TeleDrama_0.7
     UseNameServer: 1
     FixedRegion: 
     Server: 
@@ -43,6 +43,11 @@ MonoBehaviour:
   - StartGame
   - SetRole
   - GetHacked
+  - KickPlayer
+  - SyncPlayerList
+  - AddToPlayerList
+  - UpdatePlayerInList
+  - AddPlayerToList
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

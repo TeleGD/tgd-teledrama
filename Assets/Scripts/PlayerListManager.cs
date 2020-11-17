@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.UI;
+using UnityEngine.Events;
+using ExitGames.Client.Photon;
+using System.Linq;
+using Photon.Realtime;
 
 public class PlayerListManager : MonoBehaviourPun
 {
@@ -12,26 +17,27 @@ public class PlayerListManager : MonoBehaviourPun
     public Dictionary<int, PlayerData> playerList = new Dictionary<int, PlayerData>();
 
     //liste des couleurs disponnibles, permet de ne pas avoir deux fois la même couleur
-    public List<int> availableColorsIds = new List<int>();
+    private List<int> availableColorsIds = new List<int>();
+
+    public RectTransform playerListUI;
+    private bool playerListUIActive = true;
 
     private void Awake()
     {
         instance = this;
+        
     }
 
     private void Start()
     {
-        if(!PhotonNetwork.IsMasterClient)
+        if(PhotonNetwork.IsMasterClient)
         {
-            this.enabled = false;
-            return;
-        }
-
-        //initialise les couleurs disponibles
-        Color[] colors = GameManager.instance.playerColors;
-        for(int i = 0; i < colors.Length; i++)
-        {
-            availableColorsIds.Add(i);
+            //initialise les couleurs disponibles
+            Color[] colors = GameManager.instance.playerColors;
+            for (int i = 0; i < colors.Length; i++)
+            {
+                availableColorsIds.Add(i);
+            }
         }
     }
 
@@ -44,7 +50,7 @@ public class PlayerListManager : MonoBehaviourPun
 
         print("Adding Player " + info.Sender.NickName);
 
-        PlayerData data; //crée la structure
+        PlayerData data = new PlayerData(); //crée la structure
 
         if(availableColorsIds.Count > 0)
         {
@@ -58,15 +64,36 @@ public class PlayerListManager : MonoBehaviourPun
 
         data.role = 0;
         data.playerView = PhotonView.Find(viewID);
-        playerList.Add(info.Sender.ActorNumber, data);
 
         //assignation de la couleur
         Vector3 c = GameManager.instance.GetVectorColor(data.colorIndex);
         data.playerView.RPC("SetPlayerColor", RpcTarget.AllBuffered, c);
+
+        photonView.RPC("AddPlayerToList", RpcTarget.AllBuffered, info.Sender.ActorNumber, data);
+    }
+
+    [PunRPC]
+    public void AddPlayerToList(int key, PlayerData data)
+    {
+        playerList.Add(key, data);
+        UpdatePlayerListUI();
+    }
+
+    [PunRPC]
+    public void UpdatePlayerInList(int key, PlayerData data)
+    {
+        if (playerList.Keys.Contains(key))
+        {
+            playerList[key] = data;
+            UpdatePlayerListUI();
+        }
     }
 
     public void AssignRoles()
     {
+        if (!PhotonNetwork.IsMasterClient)
+            return;
+
         int pcount = playerList.Count;
 
         if (pcount < 3)
@@ -83,14 +110,14 @@ public class PlayerListManager : MonoBehaviourPun
             //choix du role
             int role = 0;
             if (i == rolesIndexes[0])
-                role = (int)GameManager.Roles.Director;
+                role = (int)GameManager.Role.Director;
             else
             {
                 //on parcourt les hackers
                 for(int j = 1; j < rolesIndexes.Length; j++)
                 {
                     if(i == rolesIndexes[j])
-                        role = (int)GameManager.Roles.Hacker;
+                        role = (int)GameManager.Role.Hacker;
                 }
             }
 
@@ -101,16 +128,87 @@ public class PlayerListManager : MonoBehaviourPun
 
             //envoie au joueur son role
             data.playerView.RPC("SetRole", data.playerView.Owner, role);
+            photonView.RPC("UpdatePlayerInList", RpcTarget.OthersBuffered, entry.Key, data);
 
             i++;
         }
     }
 
-    //structure contenant les informations utiles du joueur
-    public struct PlayerData
+    public void KickPlayer(int actorNumber)
     {
-        public int colorIndex;
-        public int role;
-        public PhotonView playerView;
+        PhotonView targetView = playerList[actorNumber].playerView;
+        targetView.RPC("KickPlayer", RpcTarget.AllBuffered);
+        playerList[actorNumber].isAlive = false;
+        photonView.RPC("UpdatePlayerInList", RpcTarget.AllBuffered, actorNumber, playerList[actorNumber]);
+    }
+
+    //UI
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            playerListUIActive = !playerListUIActive;
+            playerListUI.gameObject.SetActive(playerListUIActive);
+        }
+    }
+
+    public void UpdatePlayerListUI()
+    {
+        while(playerList.Count > playerListUI.childCount)
+        {
+            GameObject line = Instantiate(playerListUI.GetChild(0).gameObject, playerListUI);
+            line.GetComponent<RectTransform>().anchoredPosition = Vector2.down * (8 + (playerListUI.childCount - 1) * 44);
+            playerListUI.sizeDelta = new Vector2(400, 12 + (playerListUI.childCount * 44));
+        }
+
+        bool isDirector = GameManager.instance.GetMyRole() == GameManager.Role.Director;
+        int i = 0;
+        foreach (KeyValuePair<int, PlayerData> entry in playerList)
+        {
+            playerListUI.GetChild(i).Find("Name").GetComponent<Text>().text = entry.Value.playerView.Owner.NickName;
+            playerListUI.GetChild(i).Find("Role").GetComponent<Text>().text = GameManager.instance.GetRoleName((GameManager.Role)entry.Value.role);
+            playerListUI.GetChild(i).Find("Role").gameObject.SetActive(!entry.Value.isAlive);
+            playerListUI.GetChild(i).Find("Dead").gameObject.SetActive(!entry.Value.isAlive);
+
+            Button btn = playerListUI.GetChild(i).Find("Kick").GetComponent<Button>();
+            btn.gameObject.SetActive(isDirector && entry.Value.isAlive);
+            if(isDirector && entry.Value.isAlive)
+            {
+                btn.onClick.RemoveAllListeners();
+                btn.onClick.AddListener(delegate { KickPlayer(entry.Key); });
+            }
+            
+            i++;
+        }
+    }
+}
+
+//classe contenant les informations utiles du joueur
+[System.Serializable]
+public class PlayerData
+{
+    public int colorIndex;
+    public int role;
+    public PhotonView playerView;
+    public bool isAlive = true;
+
+    public static object Deserialize(byte[] data)
+    {
+        PlayerData result = new PlayerData();
+        result.colorIndex = data[0];
+        result.role = data[1];
+        int viewID = (data[2] << 8) + data[3];
+        Debug.Log("Finding photon view with id " + viewID);
+        result.playerView = PhotonView.Find(viewID);
+        result.isAlive = data[4] != 0;
+        return result;
+    }
+
+    public static byte[] Serialize(object obj)
+    {
+        PlayerData target = (PlayerData)obj;
+        int viewID = target.playerView.ViewID;
+        return new byte[] { (byte)target.colorIndex, (byte)target.role, (byte)(viewID >> 8), (byte)viewID, (byte)(target.isAlive ? 1 : 0) };
     }
 }

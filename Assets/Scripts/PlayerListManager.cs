@@ -20,7 +20,7 @@ public class PlayerListManager : MonoBehaviourPun
     private List<int> availableColorsIds = new List<int>();
 
     public RectTransform playerListUI;
-    private bool playerListUIActive = true;
+    private bool playerListUIActive = false;
 
     private void Awake()
     {
@@ -168,6 +168,7 @@ public class PlayerListManager : MonoBehaviourPun
         {
             playerListUI.GetChild(i).Find("Name").GetComponent<Text>().text = entry.Value.playerView.Owner.NickName;
             playerListUI.GetChild(i).Find("Role").GetComponent<Text>().text = GameManager.instance.GetRoleName((GameManager.Role)entry.Value.role);
+            playerListUI.GetChild(i).Find("Color").GetComponent<Image>().color = GameManager.instance.playerColors[entry.Value.colorIndex];
             playerListUI.GetChild(i).Find("Role").gameObject.SetActive(!entry.Value.isAlive);
             playerListUI.GetChild(i).Find("Dead").gameObject.SetActive(!entry.Value.isAlive);
 

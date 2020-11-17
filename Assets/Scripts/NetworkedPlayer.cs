@@ -79,7 +79,7 @@ public class NetworkedPlayer : MonoBehaviourPun, IPunObservable
 	[PunRPC]
 	public void KickPlayer()
 	{
-		if (PlayerController.me == gameObject)
+		if (PlayerController.me != null && PlayerController.me.gameObject == gameObject)
 			PlayerController.me = null;
 		gameObject.SetActive(false);
 	}

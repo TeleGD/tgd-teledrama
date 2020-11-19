@@ -89,6 +89,16 @@ public class PlayerListManager : MonoBehaviourPun
         }
     }
 
+    [PunRPC]
+    public void RemovePlayerFromList(int key)
+    {
+        if (playerList.Keys.Contains(key))
+        {
+            playerList.Remove(key);
+            UpdatePlayerListUI();
+        }
+    }
+
     public void AssignRoles()
     {
         if (!PhotonNetwork.IsMasterClient)
@@ -128,7 +138,7 @@ public class PlayerListManager : MonoBehaviourPun
 
             //envoie au joueur son role
             data.playerView.RPC("SetRole", data.playerView.Owner, role);
-            photonView.RPC("UpdatePlayerInList", RpcTarget.OthersBuffered, entry.Key, data);
+            photonView.RPC("UpdatePlayerInList", RpcTarget.AllBuffered, entry.Key, data);
 
             i++;
         }
@@ -140,6 +150,13 @@ public class PlayerListManager : MonoBehaviourPun
         targetView.RPC("KickPlayer", RpcTarget.AllBuffered);
         playerList[actorNumber].isAlive = false;
         photonView.RPC("UpdatePlayerInList", RpcTarget.AllBuffered, actorNumber, playerList[actorNumber]);
+    }
+
+    public void SyncHackedStatus(bool hacked)
+    {
+        int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+        playerList[actorNumber].isHacked = hacked;
+        photonView.RPC("UpdatePlayerInList", RpcTarget.All, actorNumber, playerList[actorNumber]);
     }
 
     public Color GetPlayerColor(int actorNumber)
@@ -164,22 +181,34 @@ public class PlayerListManager : MonoBehaviourPun
         {
             GameObject line = Instantiate(playerListUI.GetChild(0).gameObject, playerListUI);
             line.GetComponent<RectTransform>().anchoredPosition = Vector2.down * (8 + (playerListUI.childCount - 1) * 44);
-            playerListUI.sizeDelta = new Vector2(400, 12 + (playerListUI.childCount * 44));
         }
+        while (playerList.Count < playerListUI.childCount)
+        {
+            DestroyImmediate(playerListUI.GetChild(playerListUI.childCount-1).gameObject);
+        }
+        playerListUI.sizeDelta = new Vector2(400, 12 + (playerListUI.childCount * 44));
 
-        bool isDirector = GameManager.instance.GetMyRole() == GameManager.Role.Director;
+        bool iAmDirector = GameManager.instance.GetMyRole() == GameManager.Role.Director;
+        bool iAmHacker = GameManager.instance.GetMyRole() == GameManager.Role.Hacker;
         int i = 0;
         foreach (KeyValuePair<int, PlayerData> entry in playerList)
         {
             playerListUI.GetChild(i).Find("Name").GetComponent<Text>().text = entry.Value.playerView.Owner.NickName;
             playerListUI.GetChild(i).Find("Role").GetComponent<Text>().text = GameManager.instance.GetRoleName((GameManager.Role)entry.Value.role);
             playerListUI.GetChild(i).Find("Color").GetComponent<Image>().color = GameManager.instance.playerColors[entry.Value.colorIndex];
-            playerListUI.GetChild(i).Find("Role").gameObject.SetActive(!entry.Value.isAlive);
+            bool showRole = !entry.Value.isAlive || (iAmHacker && entry.Value.role == (int)GameManager.Role.Hacker) || (entry.Value.role == (int)GameManager.Role.Director);
+            playerListUI.GetChild(i).Find("Role").gameObject.SetActive(showRole);
             playerListUI.GetChild(i).Find("Dead").gameObject.SetActive(!entry.Value.isAlive);
 
+            if(iAmHacker && entry.Value.isHacked)
+            {
+                playerListUI.GetChild(i).GetComponent<Image>().color = new Color(0.7f, 0.35f, 0.8f);
+            }
+
+            bool showBtn = iAmDirector && entry.Value.isAlive && (entry.Value.role != (int)GameManager.Role.Director);
             Button btn = playerListUI.GetChild(i).Find("Kick").GetComponent<Button>();
-            btn.gameObject.SetActive(isDirector && entry.Value.isAlive);
-            if(isDirector && entry.Value.isAlive)
+            btn.gameObject.SetActive(showBtn);
+            if(showBtn)
             {
                 btn.onClick.RemoveAllListeners();
                 btn.onClick.AddListener(delegate { KickPlayer(entry.Key); });
@@ -194,20 +223,25 @@ public class PlayerListManager : MonoBehaviourPun
 [System.Serializable]
 public class PlayerData
 {
+    public PhotonView playerView;
     public int colorIndex;
     public int role;
-    public PhotonView playerView;
     public bool isAlive = true;
+    public bool isHacked = false;
 
     public static object Deserialize(byte[] data)
     {
         PlayerData result = new PlayerData();
-        result.colorIndex = data[0];
-        result.role = data[1];
-        int viewID = (data[2] << 8) + data[3];
+
+        int viewID = (data[0] << 8) + data[1];
         Debug.Log("Finding photon view with id " + viewID);
         result.playerView = PhotonView.Find(viewID);
+
+        result.colorIndex = data[2];
+        result.role = data[3];
         result.isAlive = data[4] != 0;
+        result.isHacked = data[5] != 0;
+
         return result;
     }
 
@@ -215,6 +249,14 @@ public class PlayerData
     {
         PlayerData target = (PlayerData)obj;
         int viewID = target.playerView.ViewID;
-        return new byte[] { (byte)target.colorIndex, (byte)target.role, (byte)(viewID >> 8), (byte)viewID, (byte)(target.isAlive ? 1 : 0) };
+        return new byte[]
+        {
+            (byte)(viewID >> 8),
+            (byte)viewID,
+            (byte)target.colorIndex,
+            (byte)target.role,
+            (byte)(target.isAlive ? 1 : 0),
+            (byte)(target.isHacked ? 1 : 0),
+        };
     }
 }

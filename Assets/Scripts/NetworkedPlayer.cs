@@ -74,12 +74,14 @@ public class NetworkedPlayer : MonoBehaviourPun, IPunObservable
 	[PunRPC]
 	public void GetHacked()
 	{
-		Invoke("ShowHack", Random.Range(15, 30));
+		if(GameManager.instance.GetMyRole() == GameManager.Role.Student)
+			Invoke("ShowHack", Random.Range(10, 20));
 	}
 
 	private void ShowHack()
 	{
 		GameManager.instance.transform.Find("Canvas/Hacked").gameObject.SetActive(true);
+		PlayerListManager.instance.SyncHackedStatus(true);
 	}
 
 	[PunRPC]

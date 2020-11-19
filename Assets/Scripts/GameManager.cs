@@ -62,10 +62,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, ICo
 			PlayerController.me.transform.position = spawnPos.position + (Vector3)(Random.insideUnitCircle * 3);
 	}
 
-	private void Update()
+	public void LeaveRoom()
 	{
-		if (Input.GetKeyDown(KeyCode.Escape))
-			PhotonNetwork.Disconnect();
+		PhotonNetwork.Disconnect();
 	}
 
 	public override void OnJoinedRoom()
@@ -94,7 +93,13 @@ public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, ICo
 
 	public override void OnPlayerLeftRoom(Player player)
 	{
-		Debug.Log("OnPlayerLeftRoom: " + player);
+		if (PhotonNetwork.IsMasterClient)
+			photonView.RPC("RemovePlayerFromList", RpcTarget.AllBuffered, player.ActorNumber);
+	}
+
+	public override void OnMasterClientSwitched(Player newMasterClient)
+	{
+		LeaveRoom();
 	}
 
 	//récupère la couleur demandée dans la liste et la transforme en vecteur

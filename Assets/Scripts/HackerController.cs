@@ -9,64 +9,76 @@ using System;
 public class HackerController : MonoBehaviour
 {
     public float hackDelay = 15f;
-    public float hackRange = 1f;
-    public float timePressed;
-    GameObject[] players;
+    public float hackRange = 2f;
+    private float timePressed;
+    private GameObject[] players;
     private Button hackButton;
 
-    void Start()
+    private void Start()
     {
         hackButton = GameManager.instance.transform.Find("Canvas/HackButton").GetComponent<Button>();
         hackButton.gameObject.SetActive(true);
         hackButton.onClick.AddListener(Hack);
         players = GameObject.FindGameObjectsWithTag("Player");
+        ButtonCountdown();
     }
 
-    void Hack()
+    public void Hack()
     {
-        if(GetCountdown() < 0 && InRange())
+        if(GetCountdown() < 0)
         {
-            ButtonCountdown();
-            GameObject victime = GetNearestPlayer();
-            PhotonView pv = victime.GetComponent<PhotonView>();
-            pv.RPC("GetHacked", pv.Owner);
+            GameObject victim = GetNearestPlayer();
+            if(victim != null)
+            {
+                ButtonCountdown();
+                PhotonView pv = victim.GetComponent<PhotonView>();
+                pv.RPC("GetHacked", pv.Owner);
+                hackButton.interactable = false;
+                hackButton.GetComponent<Image>().color = Color.white;
+            }
         }
     }
 
 
-    void ButtonCountdown()
+    private void ButtonCountdown()
     {
         timePressed = Time.time;
     }
 
-    float GetCountdown()
+    private float GetCountdown()
     {
         return hackDelay - Time.time + timePressed;
     }
 
-    void Update()
+    private void Update()
     {
-        hackButton.interactable = (InRange() && GetCountdown() < 0);
-    }
-
-    //verifie si un joueur est a porté du hacker
-    bool InRange()
-    {
-        foreach(GameObject joueur in players)
+        if(GetCountdown() < 0)
         {
-            if(Vector3.Distance(transform.position, joueur.transform.position) <= hackRange)
-                return true;
+            GameObject nearest = GetNearestPlayer();
+            hackButton.interactable = (nearest != null);
+            if (nearest != null)
+            {
+                int actorNumber = nearest.GetComponent<PhotonView>().Owner.ActorNumber;
+                hackButton.GetComponent<Image>().color = PlayerListManager.instance.GetPlayerColor(actorNumber);
+            }
+            else
+                hackButton.GetComponent<Image>().color = Color.white;
+
+            hackButton.transform.GetChild(0).GetComponent<Text>().text = "HACK";
         }
-        return false;
+        else
+        {
+            hackButton.transform.GetChild(0).GetComponent<Text>().text = "HACK\n" + Mathf.CeilToInt(GetCountdown()) + "s";
+        } 
     }
 
-    GameObject GetNearestPlayer()
+    private GameObject GetNearestPlayer()
     {
-        float minDist = 10000f;
         GameObject nearestPlayer = null;
-        foreach(GameObject player in players)
+        float minDist = hackRange * hackRange; //sqrt
+        foreach (GameObject player in players)
         {
-            if(player != gameObject)
+            if(player != null && player != gameObject && player.activeSelf)
             {
                 float dist = Vector3.SqrMagnitude(transform.position - player.transform.position);
                 if (dist < minDist)

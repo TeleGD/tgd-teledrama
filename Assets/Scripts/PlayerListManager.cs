@@ -142,6 +142,11 @@ public class PlayerListManager : MonoBehaviourPun
         photonView.RPC("UpdatePlayerInList", RpcTarget.AllBuffered, actorNumber, playerList[actorNumber]);
     }
 
+    public Color GetPlayerColor(int actorNumber)
+    {
+        return GameManager.instance.playerColors[playerList[actorNumber].colorIndex];
+    }
+
     //UI
 
     private void Update()

@@ -17,7 +17,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 	public Transform roomUi;
 	private string roomName;
 
-	private const string version = "0.7";
+	private const string version = "0.8";
 
 	void Start()
 	{
@@ -158,11 +158,29 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 			PhotonNetwork.JoinLobby();
 	}
 
+	//On affiche la liste des salons dans le menu
 	public override void OnRoomListUpdate(List<RoomInfo> roomList)
 	{
 		Debug.Log("OnRoomListUpdate : " + roomList.Count + " rooms");
+		int roomCount = 0;
 
-		if (roomList.Count == 0) // Aucune room trouvee
+		if (roomList.Count != 0)
+		{
+			foreach (RoomInfo room in roomList)
+			{
+				int childId = roomCount + 1;
+				if(room.PlayerCount > 0)
+				{
+					roomUi.GetChild(childId).GetChild(0).GetComponent<Text>().text = room.Name;
+					roomUi.GetChild(childId).GetChild(1).GetComponent<Text>().text = room.PlayerCount + " / " + room.MaxPlayers + " joueurs";
+					roomUi.GetChild(childId).GetComponent<Button>().onClick.RemoveAllListeners();
+					roomUi.GetChild(childId).GetComponent<Button>().onClick.AddListener(delegate { ConnectToRoom(room.Name); });
+					roomCount++;
+				}
+			}
+		}
+
+		if (roomCount == 0) // Aucune room trouvee
 		{
 			roomUi.GetChild(0).gameObject.SetActive(true); //message de liste vide
 
@@ -177,17 +195,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 
 			for (var i = 1; i < roomUi.childCount; i++)
 			{
-				roomUi.GetChild(i).gameObject.SetActive(i < roomList.Count + 1);
-			}
-
-			byte childId = 1;
-			foreach (var room in roomList)
-			{
-				roomUi.GetChild(childId).GetChild(0).GetComponent<Text>().text = room.Name;
-				roomUi.GetChild(childId).GetChild(1).GetComponent<Text>().text = room.PlayerCount + " / " + room.MaxPlayers + " joueurs";
-				roomUi.GetChild(childId).GetComponent<Button>().onClick.RemoveAllListeners();
-				roomUi.GetChild(childId).GetComponent<Button>().onClick.AddListener(delegate { ConnectToRoom(room.Name); });
-				childId++;
+				roomUi.GetChild(i).gameObject.SetActive(i < roomCount + 1);
 			}
 		}
 	}

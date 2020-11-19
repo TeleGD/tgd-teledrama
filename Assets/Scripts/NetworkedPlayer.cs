@@ -72,8 +72,14 @@ public class NetworkedPlayer : MonoBehaviourPun, IPunObservable
 	}
 
 	[PunRPC]
-	public void GetHacked(){
-		Debug.Log("LMAOOOOO tu t'es fait pirater");
+	public void GetHacked()
+	{
+		Invoke("ShowHack", Random.Range(15, 30));
+	}
+
+	private void ShowHack()
+	{
+		GameManager.instance.transform.Find("Canvas/Hacked").gameObject.SetActive(true);
 	}
 
 	[PunRPC]

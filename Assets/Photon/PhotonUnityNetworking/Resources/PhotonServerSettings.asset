@@ -16,7 +16,7 @@ MonoBehaviour:
     AppIdRealtime: 6481ddf4-2b7c-4a0d-9a10-e17e237204e0
     AppIdChat: 
     AppIdVoice: 
-    AppVersion: TeleDrama_0.7
+    AppVersion: TeleDrama_0.9
     UseNameServer: 1
     FixedRegion: eu
     Server: 
@@ -48,6 +48,7 @@ MonoBehaviour:
   - AddToPlayerList
   - UpdatePlayerInList
   - AddPlayerToList
+  - RemovePlayerFromList
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

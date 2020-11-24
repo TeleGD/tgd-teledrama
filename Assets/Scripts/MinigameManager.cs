@@ -5,12 +5,20 @@ using UnityEngine.UI;
 
 public class MinigameManager : MonoBehaviour
 {
+    public GameObject miniGamesRoot;
     public RectTransform contentHolder;
     public GameObject[] games;
+    public static bool isGameRunning = false;
+
+    private void Start()
+    {
+        isGameRunning = false;
+    }
 
     public void StartGame(int index)
     {
-        contentHolder.parent.gameObject.SetActive(true);
+        miniGamesRoot.SetActive(true);
+        isGameRunning = true;
         Instantiate(games[index], contentHolder);
     }
 
@@ -18,6 +26,7 @@ public class MinigameManager : MonoBehaviour
     {
         if(contentHolder.childCount > 0)
             Destroy(contentHolder.GetChild(0).gameObject);
-        contentHolder.parent.gameObject.SetActive(false);
+        miniGamesRoot.SetActive(false);
+        isGameRunning = false;
     }
 }

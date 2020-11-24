@@ -33,6 +33,15 @@ public class SmartWallShape : MonoBehaviour
         float brightness = 1 - Mathf.Abs(lightAngle - angle);
         GetComponent<SpriteShapeRenderer>().color = new Color(brightness, brightness, brightness);
     }
+
+    private void OnDrawGizmos()
+    {
+        Vector3 dir = (leftPoint.position - rightPoint.position).normalized;
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(leftPoint.position, leftPoint.position + dir.normalized * 1.2f);
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(rightPoint.position, rightPoint.position - dir.normalized * 1.2f);
+    }
 }
 
 /*

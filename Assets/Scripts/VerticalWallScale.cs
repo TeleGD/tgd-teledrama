@@ -4,19 +4,14 @@ using UnityEngine;
 
 public class VerticalWallScale : MonoBehaviour
 {
-    void Start()
-    {
-        UpdateWallScale();
-    }
-
     /*
-    void Update()
+    void Start()
     {
         UpdateWallScale();
     }
     */
 
-    private void UpdateWallScale()
+    public void UpdateWallScale()
     {
         if(transform.parent != null)
         {
@@ -32,9 +27,6 @@ public class VerticalWallScale : MonoBehaviour
         {
             Gizmos.color = new Color(1, 0, 0, 0.2f);
             Gizmos.DrawCube(transform.parent.position + Vector3.down * ((transform.parent.localScale.y / 2f) + 0.5f), Vector3.one);
-
-            Gizmos.color = new Color(0, 1, 1, 0.2f);
-            Gizmos.DrawCube(transform.parent.position + Vector3.up * ((transform.parent.localScale.y / 2f) + 0.5f), Vector3.one);
         }
     }
 }

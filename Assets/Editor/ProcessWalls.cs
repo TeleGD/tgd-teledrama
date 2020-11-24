@@ -18,6 +18,14 @@ public class ProcessWalls
             EditorUtility.SetDirty(wall);
         }
 
+        VerticalWallScale[] verticalWalls = GameObject.FindObjectsOfType<VerticalWallScale>();
+        foreach (VerticalWallScale wall in verticalWalls)
+        {
+            Undo.RecordObject(wall.transform, wall.name);
+            wall.UpdateWallScale();
+            EditorUtility.SetDirty(wall);
+        }
+
         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
     }
 }

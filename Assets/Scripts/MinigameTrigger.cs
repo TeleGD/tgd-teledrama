@@ -11,4 +11,15 @@ public class MinigameTrigger : MonoBehaviour
         if (collision.gameObject == PlayerController.me.gameObject)
             GameManager.instance.GetComponent<MinigameManager>().StartGame(gameIndex);
     }
+
+    private void OnDrawGizmos()
+    {
+        Collider2D coll = GetComponent<Collider2D>();
+        if(coll != null)
+        {
+            Gizmos.color = new Color(0, 1, 0, 0.4f);
+            Gizmos.DrawCube(coll.bounds.center, coll.bounds.extents * 2);
+        }
+        
+    }
 }

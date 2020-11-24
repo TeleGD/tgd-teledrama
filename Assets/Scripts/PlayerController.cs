@@ -46,6 +46,12 @@ public class PlayerController : MonoBehaviour
         if (!isMine) //si ce joueur n'est pas le notre, on ne contrôle pas sa direction
             return;
 
+        if(MinigameManager.isGameRunning)
+        {
+            body.velocity = Vector2.zero;
+            return;
+        }    
+
         Vector2 dir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         if (dir.sqrMagnitude > 1)
             dir.Normalize(); //empeche le joueur de se déplacer plus vite en diagonale

@@ -21403,23 +21403,6 @@ PrefabInstance:
       propertyPath: viewIdField
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1410569261814568729, guid: 27ea51f789ab4a640abc7b8450f12cf9,
-        type: 3}
-      propertyPath: games.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1410569261814568729, guid: 27ea51f789ab4a640abc7b8450f12cf9,
-        type: 3}
-      propertyPath: games.Array.data[1]
-      value: 
-      objectReference: {fileID: 4566751589174576980, guid: 5fa33ce0ee09afd4495241e122f48cd2,
-        type: 3}
-    - target: {fileID: 1410569261814568729, guid: 27ea51f789ab4a640abc7b8450f12cf9,
-        type: 3}
-      propertyPath: games.Array.data[2]
-      value: 
-      objectReference: {fileID: 7727564972054212620, guid: 15109ec167d72384da0ab38b5262a66f,
-        type: 3}
     - target: {fileID: 5179177925956843788, guid: 27ea51f789ab4a640abc7b8450f12cf9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -21480,11 +21463,6 @@ PrefabInstance:
       propertyPath: spawnPos
       value: 
       objectReference: {fileID: 855549282}
-    - target: {fileID: 5179177925956843789, guid: 27ea51f789ab4a640abc7b8450f12cf9,
-        type: 3}
-      propertyPath: exitIfNoMultiplayer
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5179177925956843826, guid: 27ea51f789ab4a640abc7b8450f12cf9,
         type: 3}
       propertyPath: m_Name

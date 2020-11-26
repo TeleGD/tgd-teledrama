@@ -71,7 +71,7 @@ public class bugGameControler : MonoBehaviour
 
     public void bugDestroyes(){
         if(transform.childCount <= 1){
-            MinigameManager.instance.WinGame()
+            MinigameManager.instance.WinGame();
         }
         
     }

@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 3725090702957858533}
   m_Layer: 8
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -214,6 +214,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nameRenderer: {fileID: 3725090703147515399}
+  visiblityMask:
+    serializedVersion: 2
+    m_Bits: 55
 --- !u!114 &3725090702957858533
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -316,7 +319,9 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3725090703147515393}
-  m_Text: Player
+  m_Text: 'Player
+
+    aaaaa'
   m_OffsetZ: 0
   m_CharacterSize: 0.08
   m_LineSpacing: 1

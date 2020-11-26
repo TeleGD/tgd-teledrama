@@ -4,14 +4,20 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using Photon.Realtime;
 using Photon.Pun;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IConnectionCallbacks, IInRoomCallbacks
 {
 	public static GameManager instance;
 
+	public enum Role { Student, Hacker, Director };
+	private Role myRole;
+
 	public bool exitIfNoMultiplayer = true;
 	public Color[] playerColors;
 	public Transform spawnPos;
+
+	public bool isGameStarted = false;
 
 	private void Awake()
 	{
@@ -26,19 +32,39 @@ public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, ICo
 				SceneManager.LoadScene("Menu");
 		}
 		else
-			SpawnPlayer();
+			Invoke("SpawnPlayer", 1);
+
+		transform.Find("Canvas/Master").gameObject.SetActive(PhotonNetwork.IsMasterClient);
 	}
 
 	//instancie le joueur dans le salon
 	private void SpawnPlayer()
 	{
-		PhotonNetwork.Instantiate("Player", spawnPos.position + (Vector3)(Random.insideUnitCircle * 3), Quaternion.identity, 0);
+		if(!isGameStarted)
+			PhotonNetwork.Instantiate("Player", spawnPos.position + (Vector3)(Random.insideUnitCircle * 3), Quaternion.identity, 0);
 	}
 
-	private void Update()
+	public void MasterStartGameButton()
 	{
-		if (Input.GetKeyDown(KeyCode.Escape))
-			PhotonNetwork.Disconnect();
+		if (PlayerListManager.instance.playerList.Count < 3)
+			return;
+
+		photonView.RPC("StartGame", RpcTarget.AllBuffered);
+		PlayerListManager.instance.AssignRoles();
+		transform.Find("Canvas/Master").gameObject.SetActive(false);
+	}
+
+	[PunRPC]
+	public void StartGame()
+	{
+		isGameStarted = true;
+		if (PlayerController.me != null)
+			PlayerController.me.transform.position = spawnPos.position + (Vector3)(Random.insideUnitCircle * 3);
+	}
+
+	public void LeaveRoom()
+	{
+		PhotonNetwork.Disconnect();
 	}
 
 	public override void OnJoinedRoom()
@@ -67,7 +93,13 @@ public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, ICo
 
 	public override void OnPlayerLeftRoom(Player player)
 	{
-		Debug.Log("OnPlayerLeftRoom: " + player);
+		if (PhotonNetwork.IsMasterClient)
+			photonView.RPC("RemovePlayerFromList", RpcTarget.AllBuffered, player.ActorNumber);
+	}
+
+	public override void OnMasterClientSwitched(Player newMasterClient)
+	{
+		LeaveRoom();
 	}
 
 	//récupère la couleur demandée dans la liste et la transforme en vecteur
@@ -81,9 +113,19 @@ public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, ICo
 		return new Vector3(c.r, c.g, c.b);
 	}
 
-	//affiche le ping à l'écran
-	private void OnGUI()
+	public void SetMyRole(Role role)
 	{
-		GUI.Label(new Rect(4, 4, 150, 24), "Ping : " + PhotonNetwork.GetPing() + "ms");
+		myRole = role;
+		transform.Find("Canvas/Role").GetComponent<Text>().text = "Role : " + GetRoleName(role);
+	}
+
+	public Role GetMyRole()
+	{
+		return myRole;
+	}
+
+	public string GetRoleName(Role role)
+	{
+		return (role == Role.Student ? "Etudiant" : (role == Role.Hacker ? "Hacker" : "Directeur"));
 	}
 }

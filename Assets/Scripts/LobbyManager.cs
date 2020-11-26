@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using Photon.Realtime;
 using Photon.Pun;
 using System.Collections.Generic;
+using ExitGames.Client.Photon;
 
 //fait fonctionner le menu
 public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IConnectionCallbacks
@@ -16,12 +17,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 	public Transform roomUi;
 	private string roomName;
 
-	private const string version = "0.5";
+	private const string version = "0.9";
 
 	void Start()
 	{
 		PhotonNetwork.AutomaticallySyncScene = true;
 		Cursor.lockState = CursorLockMode.None;
+
+		bool register = PhotonPeer.RegisterType(typeof(PlayerData), 255, PlayerData.Serialize, PlayerData.Deserialize);
+		Debug.Log("Register PlayerData serialization : " + register);
 
 		InitUI();
 		ConnectToPhoton();
@@ -97,7 +101,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 	public void CreateRoom()
 	{
 		ChangePlayerName(GameObject.Find("Player Name").GetComponent<InputField>().text);
-		if(PhotonNetwork.CreateRoom(roomName, new RoomOptions() { MaxPlayers = 20 }, null))
+		if(PhotonNetwork.CreateRoom(roomName, new RoomOptions() { MaxPlayers = 10 }, null))
 			SetLoadingScreen("Création du salon...");
 	}
 
@@ -154,11 +158,29 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 			PhotonNetwork.JoinLobby();
 	}
 
+	//On affiche la liste des salons dans le menu
 	public override void OnRoomListUpdate(List<RoomInfo> roomList)
 	{
 		Debug.Log("OnRoomListUpdate : " + roomList.Count + " rooms");
+		int roomCount = 0;
 
-		if (roomList.Count == 0) // Aucune room trouvee
+		if (roomList.Count != 0)
+		{
+			foreach (RoomInfo room in roomList)
+			{
+				int childId = roomCount + 1;
+				if(room.PlayerCount > 0)
+				{
+					roomUi.GetChild(childId).GetChild(0).GetComponent<Text>().text = room.Name;
+					roomUi.GetChild(childId).GetChild(1).GetComponent<Text>().text = room.PlayerCount + " / " + room.MaxPlayers + " joueurs";
+					roomUi.GetChild(childId).GetComponent<Button>().onClick.RemoveAllListeners();
+					roomUi.GetChild(childId).GetComponent<Button>().onClick.AddListener(delegate { ConnectToRoom(room.Name); });
+					roomCount++;
+				}
+			}
+		}
+
+		if (roomCount == 0) // Aucune room trouvee
 		{
 			roomUi.GetChild(0).gameObject.SetActive(true); //message de liste vide
 
@@ -173,17 +195,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 
 			for (var i = 1; i < roomUi.childCount; i++)
 			{
-				roomUi.GetChild(i).gameObject.SetActive(i < roomList.Count + 1);
-			}
-
-			byte childId = 1;
-			foreach (var room in roomList)
-			{
-				roomUi.GetChild(childId).GetChild(0).GetComponent<Text>().text = room.Name;
-				roomUi.GetChild(childId).GetChild(1).GetComponent<Text>().text = room.PlayerCount + " / " + room.MaxPlayers + " joueurs";
-				roomUi.GetChild(childId).GetComponent<Button>().onClick.RemoveAllListeners();
-				roomUi.GetChild(childId).GetComponent<Button>().onClick.AddListener(delegate { ConnectToRoom(room.Name); });
-				childId++;
+				roomUi.GetChild(i).gameObject.SetActive(i < roomCount + 1);
 			}
 		}
 	}
@@ -199,6 +211,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, IC
 	public override void OnConnectedToMaster()
 	{
 		SetLoadingScreen("Connection au lobby...");
+		PhotonNetwork.OfflineMode = false;
 		PhotonNetwork.JoinLobby();
 	}
 

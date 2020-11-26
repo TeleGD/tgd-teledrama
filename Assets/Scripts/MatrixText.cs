@@ -56,6 +56,7 @@ public class MatrixText : MonoBehaviour
         yield return new WaitForSeconds(1);
         text.text += "TN/users/Patrick/ $";
         done = true;
+        //MinigameManager.instance.WinGame();
     }
 
     public void Reboot()

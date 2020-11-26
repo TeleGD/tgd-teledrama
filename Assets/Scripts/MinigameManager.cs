@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class MinigameManager : MonoBehaviour
 {
+    public static MinigameManager instance;
+
     public GameObject miniGamesRoot;
     public RectTransform contentHolder;
     public GameObject[] games;
@@ -12,6 +14,7 @@ public class MinigameManager : MonoBehaviour
 
     private void Start()
     {
+        instance = this;
         isGameRunning = false;
     }
 
@@ -28,5 +31,11 @@ public class MinigameManager : MonoBehaviour
             Destroy(contentHolder.GetChild(0).gameObject);
         miniGamesRoot.SetActive(false);
         isGameRunning = false;
+    }
+
+    public void WinGame()
+    {
+        Debug.Log("Jeu gagné !");
+        CloseGame();
     }
 }

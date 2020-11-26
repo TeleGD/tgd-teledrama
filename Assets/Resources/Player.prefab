@@ -214,6 +214,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nameRenderer: {fileID: 3725090703147515399}
+  visiblityMask:
+    serializedVersion: 2
+    m_Bits: 55
 --- !u!114 &3725090702957858533
 MonoBehaviour:
   m_ObjectHideFlags: 0

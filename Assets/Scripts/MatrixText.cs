@@ -20,43 +20,32 @@ public class MatrixText : MonoBehaviour
             if (!rebooting)
             {
                 if (text.text.Length <= 2048)
-                {
                     text.text += Random.Range(0, 999).ToString();
-                }
                 else
-                {
                     text.text = "";
-                }
             }
-            else
-            {
-                if (!booting)
-                {
-                    text.text = "Rebooting ...";
-                }
-                
-            }
+            else if (!booting)
+                text.text = "Rebooting ...";
         }
     }
 
     public IEnumerator StartTimer()
     {
-        int seconde = 0;
-        while (seconde < duration)
-        {
-            // suspend execution for 1 seconds
-            yield return new WaitForSeconds(1);
-            seconde += 1;
-        }
+        yield return new WaitForSeconds(duration);
         booting = true;
+
         yield return new WaitForSeconds(1);
         text.text = "To run a command as administrator (user \"root\"), use \"sudo <command>\".\n";
+
         yield return new WaitForSeconds(1);
         text.text += "See \"man sudo_root\" for details.\n\n";
+
         yield return new WaitForSeconds(1);
         text.text += "TN/users/Patrick/ $";
+
         done = true;
-        //MinigameManager.instance.WinGame();
+        yield return new WaitForSeconds(1);
+        MinigameManager.instance.WinGame();
     }
 
     public void Reboot()

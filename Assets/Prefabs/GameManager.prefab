@@ -1038,7 +1038,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 0}
-  viewIdField: 0
+  viewIdField: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!114 &1663182244
@@ -1082,6 +1082,8 @@ MonoBehaviour:
   contentHolder: {fileID: 4884726022187068451}
   games:
   - {fileID: 8864738500839357299, guid: 69af863b605883247abab767c1471aec, type: 3}
+  - {fileID: 4566751589174576980, guid: 5fa33ce0ee09afd4495241e122f48cd2, type: 3}
+  - {fileID: 7727564972054212620, guid: 15109ec167d72384da0ab38b5262a66f, type: 3}
 --- !u!1 &5296782821632754449
 GameObject:
   m_ObjectHideFlags: 0

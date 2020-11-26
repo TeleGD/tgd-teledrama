@@ -9,6 +9,7 @@ public class NetworkedPlayer : MonoBehaviourPun, IPunObservable
     private Rigidbody2D body;
 	private Vector2 targetPlayerPos;
 	public TextMesh nameRenderer;
+	public LayerMask visiblityMask;
 
     private void Start()
     {
@@ -51,6 +52,15 @@ public class NetworkedPlayer : MonoBehaviourPun, IPunObservable
 		if (!photonView.IsMine && body != null)
 		{
 			transform.position = Vector2.Lerp(transform.position, targetPlayerPos + body.velocity * 0.2f, Time.deltaTime * 5);
+			bool visible = true;
+			if(PlayerController.me != null)
+			{
+				if (Physics2D.Linecast(transform.position + Vector3.down * 0.3f, PlayerController.me.transform.position + Vector3.down * 0.3f, visiblityMask))
+					visible = false;
+			}
+			float scale = Mathf.Lerp(transform.localScale.x, visible ? 1f : 0f, Time.deltaTime * 8);
+			scale = (scale < 0.1f && !visible) ? 0f : ((scale > 0.9f && visible) ? 1f : scale); 
+			transform.localScale = Vector3.one * scale;
 		}
 	}
 

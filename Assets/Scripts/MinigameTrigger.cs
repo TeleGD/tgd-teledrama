@@ -9,7 +9,7 @@ public class MinigameTrigger : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject == PlayerController.me.gameObject)
-            GameManager.instance.GetComponent<MinigameManager>().StartGame(gameIndex);
+            MinigameManager.instance.StartGame(gameIndex);
     }
 
     private void OnDrawGizmos()

@@ -62,6 +62,18 @@ public class GameManager : MonoBehaviourPunCallbacks, IMatchmakingCallbacks, ICo
 			PlayerController.me.transform.position = spawnPos.position + (Vector3)(Random.insideUnitCircle * 3);
 	}
 
+	[PunRPC]
+	public void HackerWin()
+	{
+		transform.Find("Canvas/Hacker Win").gameObject.SetActive(true);
+	}
+
+	[PunRPC]
+	public void StudentWin()
+	{
+		transform.Find("Canvas/Student Win").gameObject.SetActive(true);
+	}
+
 	public void LeaveRoom()
 	{
 		PhotonNetwork.Disconnect();

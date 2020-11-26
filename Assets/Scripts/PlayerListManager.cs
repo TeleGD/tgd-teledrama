@@ -7,6 +7,7 @@ using UnityEngine.Events;
 using ExitGames.Client.Photon;
 using System.Linq;
 using Photon.Realtime;
+using Photon.Pun.UtilityScripts;
 
 public class PlayerListManager : MonoBehaviourPun
 {
@@ -21,6 +22,7 @@ public class PlayerListManager : MonoBehaviourPun
 
     public RectTransform playerListUI;
     private bool playerListUIActive = false;
+    private bool areRolesAssigned = false;
 
     private void Awake()
     {
@@ -86,6 +88,27 @@ public class PlayerListManager : MonoBehaviourPun
         {
             playerList[key] = data;
             UpdatePlayerListUI();
+
+            if(PhotonNetwork.IsMasterClient && areRolesAssigned)
+            {
+                bool hackerWin = true;
+                foreach (KeyValuePair<int, PlayerData> entry in playerList)
+                {
+                    if (entry.Value.role == (int)GameManager.Role.Student && !entry.Value.isHacked && entry.Value.isAlive)
+                        hackerWin = false;
+                }
+                if(hackerWin)
+                    photonView.RPC("HackerWin", RpcTarget.AllBuffered);
+
+                bool studentWin = true;
+                foreach (KeyValuePair<int, PlayerData> entry in playerList)
+                {
+                    if (entry.Value.role == (int)GameManager.Role.Hacker && entry.Value.isAlive)
+                        studentWin = false;
+                }
+                if (studentWin)
+                    photonView.RPC("StudentWin", RpcTarget.AllBuffered);
+            }
         }
     }
 
@@ -109,7 +132,7 @@ public class PlayerListManager : MonoBehaviourPun
         if (pcount < 3)
             return;
         
-        int hackerCount = 1 + Mathf.FloorToInt(pcount / 6f);
+        int hackerCount = Mathf.CeilToInt(pcount / 6f);
         //index 0 = directeur, index 1 à n = hacker
         int[] rolesIndexes = TGDUtils.RandomIntegers(1 + hackerCount, pcount);
 
@@ -142,6 +165,8 @@ public class PlayerListManager : MonoBehaviourPun
 
             i++;
         }
+
+        areRolesAssigned = true;
     }
 
     public void KickPlayer(int actorNumber)

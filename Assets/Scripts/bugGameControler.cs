@@ -12,8 +12,8 @@ public class bugGameControler : MonoBehaviour
     public int nbBug = 10;
 
 
-    float maxx = 200;
-    float maxy = 100;
+    float maxx = 180;
+    float maxy = 80;
 
     public float mindist = 1;
 
@@ -70,7 +70,9 @@ public class bugGameControler : MonoBehaviour
     }
 
     public void bugDestroyes(){
-        jeufini = transform.childCount <= 1;
+        if(transform.childCount <= 1){
+            MinigameManager.instance.WinGame()
+        }
         
     }
 

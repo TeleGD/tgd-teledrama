@@ -1,0 +1,6 @@
+- Clément Crouzet (@CrouzetC)
+- Guilhèm Roura (@Bartmaniaque)
+- Lucas Gouin (@DocFore)
+- Stéphane Hulot (@stephane-hulot)
+- Thierry Jacobs (@JacobsThierry)
+- Valentin Plantard-Wahl (@Alex2740)
